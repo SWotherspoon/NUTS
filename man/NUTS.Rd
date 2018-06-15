@@ -8,27 +8,41 @@ NUTS(theta, f, grad_f, n_iter, M_diag = NULL, M_adapt = 50, delta = 0.5,
   max_treedepth = 10, eps = 1, verbose = TRUE)
 }
 \arguments{
-\item{theta}{Initial value for the parameters}
+\item{theta}{Starting parameter vector.}
 
-\item{f}{log-likelihood function (up to a constant)}
+\item{f}{log posterior function.}
 
-\item{grad_f}{the gradient of the log-likelihood function}
+\item{grad_f}{gradient of the log posterior.}
 
-\item{n_iter}{Number of MCMC iterations}
+\item{n_iter}{Number of MCMC iterations.}
 
-\item{M_diag}{Diagonal elements of the mass matrix in HMC. Defaults to ones.}
+\item{M_diag}{Diagonal elements of the HMC mass matrix.}
 
-\item{M_adapt}{Parameter M_adapt in algorithm 6 in the NUTS paper}
+\item{M_adapt}{Parameter M_adapt in algorithm 6 in the NUTS paper.}
 
-\item{delta}{Target acceptance ratio, defaults to 0.5}
+\item{delta}{Target acceptance ratio, defaults to 0.5.}
 
-\item{max_treedepth}{Maximum depth of the binary trees constructed by NUTS}
+\item{max_treedepth}{Maximum depth of the binary trees constructed by NUTS.}
 
-\item{eps}{Starting guess for epsilon}
+\item{eps}{Starting guess for epsilon.}
+
+\item{verbose}{Print diagnostic output.}
 }
 \value{
-Matrix with the trace of sampled parameters. Each mcmc iteration in rows and parameters in columns.
+Returns a matrix where each row is a sample and each column a parameter.
 }
 \description{
-No-U-Turn sampler
+No U-Turn sampler for Hamiltonian Monte Carlo.
+}
+\details{
+This is a pure R implementation of algorithm 6 of Hoffman and
+Gelman (2014).  The user must provide a function to evaluate the
+log posterior and a function to evaluate the gradient of the log
+posterior with respect to the model parameters.  Each must take a
+vector of parameters as its only argument.
+}
+\references{
+Hoffman, M. D., & Gelman, A. (2014). The No-U-turn sampler:
+  adaptively setting path lengths in Hamiltonian Monte
+  Carlo. Journal of Machine Learning Research, 15(1), 1593-1623.
 }

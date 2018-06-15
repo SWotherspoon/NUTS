@@ -1,10 +1,10 @@
 Package: NUTS
 Type: Package
-Title: No-U-Turn sampler for HMC
+Title: No-U-Turn sampler for Hamiltonian Monte Carlo
 Version: 0.1.0
-Author: Kaspar Märtens
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: Implementation of the No-U-Turn sampler for Hamiltonian Monte Carlo
+Author: Kaspar Märtens, S. Wotherspoon
+Maintainer: Simon Wotherspoon <Simon.Wotherspoon@utas.edu.au>
+Description: A pure R implementation of the No-U-Turn sampler for Hamiltonian Monte Carlo (algorithm 6 of Hoffman and Gelman 2014).
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true

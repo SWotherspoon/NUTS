@@ -1,16 +1,28 @@
-#' No-U-Turn sampler
-#'
-#' @param theta Initial value for the parameters
-#' @param f log-likelihood function (up to a constant)
-#' @param grad_f the gradient of the log-likelihood function
-#' @param n_iter Number of MCMC iterations
-#' @param M_diag Diagonal elements of the mass matrix in HMC. Defaults to ones.
-#' @param M_adapt Parameter M_adapt in algorithm 6 in the NUTS paper
-#' @param delta Target acceptance ratio, defaults to 0.5
-#' @param max_treedepth Maximum depth of the binary trees constructed by NUTS
-#' @param eps Starting guess for epsilon
-#' @return Matrix with the trace of sampled parameters. Each mcmc iteration in rows and parameters in columns.
-#' @export
+##' No U-Turn sampler for Hamiltonian Monte Carlo.
+##'
+##' This is a pure R implementation of algorithm 6 of Hoffman and
+##' Gelman (2014).  The user must provide a function to evaluate the
+##' log posterior and a function to evaluate the gradient of the log
+##' posterior with respect to the model parameters.  Each must take a
+##' vector of parameters as its only argument.
+##'
+##' @title No-U-Turn sampler
+##' @param theta Starting parameter vector.
+##' @param f log posterior function.
+##' @param grad_f gradient of the log posterior.
+##' @param n_iter Number of MCMC iterations.
+##' @param M_diag Diagonal elements of the HMC mass matrix.
+##' @param M_adapt Parameter M_adapt in algorithm 6 in the NUTS paper.
+##' @param delta Target acceptance ratio, defaults to 0.5.
+##' @param max_treedepth Maximum depth of the binary trees constructed by NUTS.
+##' @param eps Starting guess for epsilon.
+##' @param verbose Print diagnostic output.
+##' @return Returns a matrix where each row is a sample and each column a parameter.
+##' @references
+##'   Hoffman, M. D., & Gelman, A. (2014). The No-U-turn sampler:
+##'   adaptively setting path lengths in Hamiltonian Monte
+##'   Carlo. Journal of Machine Learning Research, 15(1), 1593-1623.
+##' @export
 NUTS <- function(theta, f, grad_f, n_iter, M_diag = NULL, M_adapt = 50, delta = 0.5, max_treedepth = 10, eps = 1, verbose = TRUE){
   theta_trace <- matrix(0, n_iter, length(theta))
   par_list <- list(M_adapt = M_adapt)
@@ -24,6 +36,7 @@ NUTS <- function(theta, f, grad_f, n_iter, M_diag = NULL, M_adapt = 50, delta = 
 }
 
 
+##' @importFrom stats rnorm
 NUTS_one_step <- function(theta, iter, f, grad_f, par_list, delta = 0.5, max_treedepth = 10, eps = 1, verbose = TRUE){
   kappa <- 0.75
   t0 <- 10

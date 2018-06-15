@@ -1,4 +1,4 @@
-leapfrog_step = function(theta, r, eps, grad_f, M_diag){
+leapfrog_step <- function(theta, r, eps, grad_f, M_diag){
   r_tilde <- r + 0.5 * eps * grad_f(theta)
   theta_tilde <- theta + eps * r_tilde / M_diag
   r_tilde <- r_tilde + 0.5 * eps * grad_f(theta_tilde)
@@ -9,7 +9,9 @@ joint_log_density = function(theta, r, f, M_diag){
   f(theta) - 0.5*sum(r**2 / M_diag)
 }
 
-find_reasonable_epsilon = function(theta, f, grad_f, M_diag, eps = 1, verbose = TRUE){
+
+##' @importFrom stats rnorm runif
+find_reasonable_epsilon <- function(theta, f, grad_f, M_diag, eps = 1, verbose = TRUE){
   r <- rnorm(length(theta), 0, sqrt(M_diag))
   proposed <- leapfrog_step(theta, r, eps, grad_f, M_diag)
   log_ratio <- joint_log_density(proposed$theta, proposed$r, f, M_diag) - joint_log_density(theta, r, f, M_diag)
@@ -29,14 +31,14 @@ find_reasonable_epsilon = function(theta, f, grad_f, M_diag, eps = 1, verbose = 
   eps
 }
 
-check_NUTS = function(s, theta_plus, theta_minus, r_plus, r_minus){
+check_NUTS <- function(s, theta_plus, theta_minus, r_plus, r_minus){
   if(is.na(s)) return(0)
   condition1 <- crossprod(theta_plus - theta_minus, r_minus) >= 0
   condition2 <- crossprod(theta_plus - theta_minus, r_plus) >= 0
   s && condition1 && condition2
 }
 
-build_tree = function(theta, r, u, v, j, eps, theta0, r0, f, grad_f, M_diag, Delta_max = 1000){
+build_tree <- function(theta, r, u, v, j, eps, theta0, r0, f, grad_f, M_diag, Delta_max = 1000){
   if(j == 0){
     proposed <- leapfrog_step(theta, r, v*eps, grad_f, M_diag)
     theta <- proposed$theta
