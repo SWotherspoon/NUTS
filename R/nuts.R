@@ -23,6 +23,16 @@
 ##'   adaptively setting path lengths in Hamiltonian Monte
 ##'   Carlo. Journal of Machine Learning Research, 15(1), 1593-1623.
 ##' @export
+##' @examples 
+##' V <- matrix(c(2,1,1,1),2,2)
+##' VI <- solve(V)
+##' mu <- c(1,2)
+##' logp <- function(x) -1/2*drop((x-mu)%*%VI%*%(x-mu))
+##' logp.gr <- function(x) -as.vector(VI%*%(x-mu))
+##' s <- NUTS(c(1,1),logp,logp.gr,1000)
+##' colMeans(s)
+##' cov(s)
+##'
 NUTS <- function(theta, f, grad_f, n_iter, M_diag=NULL, M_adapt=50, delta=0.5, max_treedepth=10, eps=1, verbose=TRUE){
 
   theta_trace <- matrix(0, n_iter, length(theta))
@@ -39,7 +49,7 @@ NUTS <- function(theta, f, grad_f, n_iter, M_diag=NULL, M_adapt=50, delta=0.5, m
 }
 
 
-##' @importFrom stats rnorm runif
+##' @importFrom stats rnorm runif rexp
 NUTS_one_step <- function(theta, iter, f, grad_f, par_list, delta=0.5, max_treedepth=10, eps=1, verbose=TRUE){
 
   kappa <- 0.75
@@ -62,10 +72,10 @@ NUTS_one_step <- function(theta, iter, f, grad_f, par_list, delta=0.5, max_treed
   }
 
   r0 <- rnorm(length(theta), 0, sqrt(M_diag))
-  log <- u <- joint_log_density(theta, r0, f, M_diag) - rexp(1)
-  if(is.nan(u)){
+  log_u <- joint_log_density(theta, r0, f, M_diag) - rexp(1)
+  if(is.nan(log_u)){
     warning("NUTS: sampled slice u is NaN")
-    u <- runif(1, 0, 1e5)
+    log_u <- log(runif(1, 0, 1e5))
   }
   theta_minus <- theta
   theta_plus <- theta
@@ -81,11 +91,11 @@ NUTS_one_step <- function(theta, iter, f, grad_f, par_list, delta=0.5, max_treed
     # choose direction {-1, 1}
     direction <- sample(c(-1, 1), 1)
     if(direction == -1){
-      temp <- build_tree(theta_minus, r_minus, u, direction, j, eps, theta, r0, f, grad_f, M_diag)
+      temp <- build_tree(theta_minus, r_minus, log_u, direction, j, eps, theta, r0, f, grad_f, M_diag)
       theta_minus <- temp$theta_minus
       r_minus <- temp$r_minus
     } else{
-      temp <- build_tree(theta_plus, r_plus, u, direction, j, eps, theta, r0, f, grad_f, M_diag)
+      temp <- build_tree(theta_plus, r_plus, log_u, direction, j, eps, theta, r0, f, grad_f, M_diag)
       theta_plus <- temp$theta_plus
       r_plus <- temp$r_plus
     }

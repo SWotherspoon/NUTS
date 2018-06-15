@@ -41,6 +41,17 @@ log posterior and a function to evaluate the gradient of the log
 posterior with respect to the model parameters.  Each must take a
 vector of parameters as its only argument.
 }
+\examples{
+V <- matrix(c(2,1,1,1),2,2)
+VI <- solve(V)
+mu <- c(1,2)
+logp <- function(x) -1/2*drop((x-mu)\%*\%VI\%*\%(x-mu))
+logp.gr <- function(x) -as.vector(VI\%*\%(x-mu))
+s <- NUTS(c(1,1),logp,logp.gr,1000)
+colMeans(s)
+cov(s)
+
+}
 \references{
 Hoffman, M. D., & Gelman, A. (2014). The No-U-turn sampler:
   adaptively setting path lengths in Hamiltonian Monte
