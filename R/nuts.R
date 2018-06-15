@@ -35,7 +35,7 @@
 ##' colMeans(s)
 ##' cov(s)
 ##'
-NUTS <- function(theta, f, grad_f, n_iter, M_diag=NULL, M_adapt=50, delta=0.5, max_treedepth=10, eps=1, verbose=TRUE){
+NUTS <- function(theta, f, grad_f, n_iter, M_diag=NULL, M_adapt=200, delta=0.5, max_treedepth=15, eps=1, verbose=TRUE){
 
   theta_trace <- matrix(0, n_iter, length(theta))
   par_list <- list(M_adapt=M_adapt,M_diag=M_diag)
