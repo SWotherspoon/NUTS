@@ -42,9 +42,11 @@ posterior with respect to the model parameters.  Each must take a
 vector of parameters as its only argument.
 }
 \examples{
+## Sample from a bivariate Normal
 V <- matrix(c(2,1,1,1),2,2)
 VI <- solve(V)
 mu <- c(1,2)
+## Log posterior and gradient
 logp <- function(x) -1/2*drop((x-mu)\%*\%VI\%*\%(x-mu))
 logp.gr <- function(x) -as.vector(VI\%*\%(x-mu))
 s <- NUTS(c(1,1),logp,logp.gr,1000)
