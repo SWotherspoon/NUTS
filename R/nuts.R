@@ -23,7 +23,7 @@
 ##'   adaptively setting path lengths in Hamiltonian Monte
 ##'   Carlo. Journal of Machine Learning Research, 15(1), 1593-1623.
 ##' @export
-##' @examples 
+##' @examples
 ##' ## Sample from a bivariate Normal
 ##' V <- matrix(c(2,1,1,1),2,2)
 ##' VI <- solve(V)
@@ -38,7 +38,7 @@
 NUTS <- function(theta, f, grad_f, n_iter, M_diag=NULL, M_adapt=50, delta=0.5, max_treedepth=10, eps=1, verbose=TRUE){
 
   theta_trace <- matrix(0, n_iter, length(theta))
-  par_list <- list(M_adapt=M_adapt)
+  par_list <- list(M_adapt=M_adapt,M_diag=M_diag)
 
   for(iter in 1:n_iter){
     nuts <- NUTS_one_step(theta, iter, f, grad_f, par_list, delta=delta, max_treedepth=max_treedepth, eps=eps, verbose=verbose)
@@ -86,8 +86,7 @@ NUTS_one_step <- function(theta, iter, f, grad_f, par_list, delta=0.5, max_treed
   j <- 0
   n <- 1
   s <- 1
-  if(iter > M_adapt)
-    eps <- runif(1, 0.9*eps_bar, 1.1*eps_bar)
+  if(iter > M_adapt) eps <- runif(1, 0.9*eps_bar, 1.1*eps_bar)
 
   while(s == 1){
     # choose direction {-1, 1}
@@ -103,8 +102,7 @@ NUTS_one_step <- function(theta, iter, f, grad_f, par_list, delta=0.5, max_treed
     }
     if(is.nan(temp$s)) temp$s <- 0
     if(temp$s == 1){
-      if(runif(1) < temp$n/n)
-        theta <- temp$theta
+      if(runif(1) < temp$n/n) theta <- temp$theta
     }
     n <- n+temp$n
     s <- check_NUTS(temp$s, theta_plus, theta_minus, r_plus, r_minus)
