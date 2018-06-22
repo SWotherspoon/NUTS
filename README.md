@@ -7,7 +7,7 @@ This is a fork of [kasparmartens/NUTS](https://github.com/kasparmartens/NUTS), a
 The package is easily installed from GitHub, using the devtools package.
 
 ```R
-devtools::install_github("ahproctor/LC50")
+devtools::install_github("SWotherspoon/NUTS")
 ```
 
 If you don't have `devtools` installed already, install it first.
